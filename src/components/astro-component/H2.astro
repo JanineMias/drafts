@@ -1,0 +1,9 @@
+---
+type Props = {
+    text: string;
+    class?: string; // Optional class prop
+}
+const {text, class: customClass } = Astro.props;
+---
+
+<h2 class = {`text-5xl text-gray-700 font-bold mb-6 max-md:text-4xl ${customClass ?? ''}`}>{text}</h2>
