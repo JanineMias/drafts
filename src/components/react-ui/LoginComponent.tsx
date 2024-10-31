@@ -1,13 +1,18 @@
 // IMPORTING REACT 
 import React, { useState } from 'react';
 import type { FormEvent } from 'react';
+
 // IMPORTING UI-KIT FROM SHADCN
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+
 // CREATED A UTILITY TSX FILE FOR CREATING CUSTOM TOAST.
 import { useCustomToast } from "@/utils/toastHelper";
+
 // OWN CREATED ASTRO COMPONENT
 import InputLabel from '@/components/react-ui/InputLabel';
 
@@ -15,8 +20,6 @@ import InputLabel from '@/components/react-ui/InputLabel';
 import { UserIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 const LoginComponent: React.FC = () => {
-
-  const { showCustomToast } = useCustomToast();
 
   // VARIABLES TO BE POST
   const [username, setUsername] = useState<string>('');
@@ -28,6 +31,17 @@ const LoginComponent: React.FC = () => {
 
   const [responseData, setResponseData] = useState<any>(null);
 
+  // FOR CLOSING THE DIALOG BOX
+  const closeDialog = () =>  setLoginState(false);
+
+  // SHOW PASSWORD
+  const [showPassword, setShowPassword] = useState(false);
+  const handleCheckboxChange = () => setShowPassword(!showPassword);
+
+  // CUSTOM TOAST
+  const { showCustomToast } = useCustomToast();
+
+  // HANDLE LOGIN FORM
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -74,11 +88,6 @@ const LoginComponent: React.FC = () => {
     }
   };
 
-  const closeDialog = () => {
-    setLoginState(false);
-
-  };
-
   return (
     <Card className="w-96">
       <CardHeader>
@@ -96,20 +105,30 @@ const LoginComponent: React.FC = () => {
                 onChange={(e) => setIsUserValid(true)}
               />
           </InputLabel >
+          <a className="flex flex-row float-right items-center space-x-2">  
+              <Label className="text-sm font-semibold text-blue-800 hover:text-blue-600">Forgot Password?</Label>
+          </a>
           <InputLabel label="Password" icon ={LockClosedIcon}>
             <Input
               placeholder='Enter password'
               className={`focus:border-transparent transition-shadow duration-300 ease-in-out w-full ${isPassValid ? '' : 'border-red-500 text-red-700'}`}
-              type="password"
+              type= {showPassword ? 'text' : 'password'}
               value={password}
               onInput={(e) => setPassword(e.currentTarget.value)}
               onChange={(e) => setIsPassValid(true)}
             />
+          <div className="flex flex-row float-right items-center space-x-2">  
+              <Checkbox id="show-password"
+                        checked={showPassword}
+                        onCheckedChange={handleCheckboxChange}
+               /> 
+              <Label className="text-sm font-normal">Show Password</Label>
+          </div>
           </InputLabel>
+          
+            
         </CardContent>
-
-        <CardFooter className="flex flex-col mt-2">
-
+        <CardFooter className="flex flex-col mt-4">
           <Button className="flex w-full my-2" type="submit">Confirm</Button>
         </CardFooter>
       </form>

@@ -23,7 +23,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/register', signupRouter);
 app.use('/api/users', userRouter);
 
-
 app.listen(PORT, () => {
   console.log(`Node API server running on http://localhost:${PORT}`);
 });
