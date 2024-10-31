@@ -106,7 +106,7 @@ const LoginComponent: React.FC = () => {
               />
           </InputLabel >
           <a className="flex flex-row float-right items-center space-x-2">  
-              <Label className="text-sm font-semibold text-blue-800 hover:text-blue-600">Forgot Password?</Label>
+              <Label className="text-sm font-semibold text-blue-800 hover:text-blue-600">Forgot?</Label>
           </a>
           <InputLabel label="Password" icon ={LockClosedIcon}>
             <Input
