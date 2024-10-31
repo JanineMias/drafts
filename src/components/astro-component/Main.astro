@@ -1,3 +1,9 @@
+---
+// SHOW TOAST FOR ALL PAGES
+import { Toaster } from "@/components/ui/toaster"
+---
+
 <main class="px-24 max-sm:px-8 mx-auto flex justify-center">
+    <Toaster client:load/>
     <slot/>
 </main>

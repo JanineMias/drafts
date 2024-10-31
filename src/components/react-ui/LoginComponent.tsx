@@ -2,15 +2,22 @@
 import React, { useState } from 'react';
 import type { FormEvent } from 'react';
 // IMPORTING UI-KIT FROM SHADCN
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog"
+// CREATED A UTILITY TSX FILE FOR CREATING CUSTOM TOAST.
+import { useCustomToast } from "@/utils/toastHelper";
+// OWN CREATED ASTRO COMPONENT
+import InputLabel from '@/components/react-ui/InputLabel';
+
 // IMPORTING ICON FROM HEROICONS
 import { UserIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 const LoginComponent: React.FC = () => {
+
+  const { showCustomToast } = useCustomToast();
+
   // VARIABLES TO BE POST
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -18,7 +25,6 @@ const LoginComponent: React.FC = () => {
   const [isUserValid, setIsUserValid] = useState(true);
   const [isPassValid, setIsPassValid] = useState(true);
   const [loginState, setLoginState] = useState(false);
-  const [error, setError] = useState<string>('');
 
   const [responseData, setResponseData] = useState<any>(null);
 
@@ -39,13 +45,18 @@ const LoginComponent: React.FC = () => {
 
       // CHECKS IF THE RESPONSE IF OKAY OR NOT
       if (!response.ok) {
-        setError(data.error);
-        // USER IS NOT VALID IF STATUS RESPONSE IS ERROR 404, WHICH IS USER NOT FOUND
-        setIsUserValid(response.status !== 404);
-        // PASSWORD IS NOT VALID IF STATUS RESPONSE IS ERROR 401, WHICH IS NOT UNATHORIZED BECAUSE WRONG PASSWORD
-        setIsPassValid(response.status !== 401);
+        showCustomToast("Error:", data.error, "destructive");
+        if(response.status == 400){
+            if(username == '') setIsUserValid(false);
+            if(password == '') setIsPassValid(false);
+        }else{
+            // USER IS NOT VALID IF STATUS RESPONSE IS ERROR 404, WHICH IS USER NOT FOUND
+            setIsUserValid(response.status !== 404);
+            // PASSWORD IS NOT VALID IF STATUS RESPONSE IS ERROR 401, WHICH IS NOT UNATHORIZED BECAUSE WRONG PASSWORD
+            setIsPassValid(response.status !== 401);
+        }
+
       }else{
-        setError('');
         setLoginState(true);
         setIsUserValid(true);
         setIsPassValid(true);
@@ -56,15 +67,16 @@ const LoginComponent: React.FC = () => {
 
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message);
+        showCustomToast("Error:", err.message, "destructive");
       } else {
-        setError('An unknown error occurred');
+        showCustomToast("Error:", "An unknown error occurred", "destructive");
       }
     }
   };
 
   const closeDialog = () => {
     setLoginState(false);
+
   };
 
   return (
@@ -74,26 +86,17 @@ const LoginComponent: React.FC = () => {
       </CardHeader>
       <form onSubmit={handleLogin}>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center gap-x-1">
-              <UserIcon className="size-4 max-sm:size-5 text-gray-600" />
-              <Label htmlFor="loginUsername">Username</Label>
-            </div>
+          <InputLabel label="Username" icon ={UserIcon}>
             <Input
-              placeholder='Enter Username/E-mail'
-              className={`focus:border-transparent transition-shadow duration-300 ease-in-out w-full ${isUserValid ? '' : 'border-red-500 text-red-700'}`}
-              type="text"
-              value={username}
-              onInput={(e) => setUsername(e.currentTarget.value)}
-              onChange={(e) => setIsUserValid(true)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-x-1">
-              <LockClosedIcon className="size-4 max-sm:size-5 text-gray-600" />
-              <Label htmlFor="loginPassword">Password</Label>
-            </div>
+                placeholder='Enter Username/E-mail'
+                className={`focus:border-transparent transition-shadow duration-300 ease-in-out w-full ${isUserValid ? '' : 'border-red-500 text-red-700'}`}
+                type="text"
+                value={username}
+                onInput={(e) => setUsername(e.currentTarget.value)}
+                onChange={(e) => setIsUserValid(true)}
+              />
+          </InputLabel >
+          <InputLabel label="Password" icon ={LockClosedIcon}>
             <Input
               placeholder='Enter password'
               className={`focus:border-transparent transition-shadow duration-300 ease-in-out w-full ${isPassValid ? '' : 'border-red-500 text-red-700'}`}
@@ -101,20 +104,12 @@ const LoginComponent: React.FC = () => {
               value={password}
               onInput={(e) => setPassword(e.currentTarget.value)}
               onChange={(e) => setIsPassValid(true)}
-              required
             />
-          </div>
+          </InputLabel>
         </CardContent>
 
         <CardFooter className="flex flex-col mt-2">
-          {/* DISPLAYS ERROR AFTER SUBMITTING INPUTTED DATA*/}
-          {error && (
-              <div className="w-full flex flex-row gap-x-1">
-                <p className="text-red-500 font-semibold ">Error:</p>
-                <p className="text-red-500"> {JSON.stringify(error, null, 2).replace(/"/g, '')}</p>
-              </div>
-             
-          )}
+
           <Button className="flex w-full my-2" type="submit">Confirm</Button>
         </CardFooter>
       </form>
