@@ -1,0 +1,26 @@
+---
+// IMPORTING ASTRO COMPONENT
+import Base from '../layouts/Base.astro';
+import Main from '../components/astro-component/Main.astro';
+// IMPORTING REACT COMPONENT
+import ForgotComponent from '../components/react-ui/ForgotComponent';
+// IMPORTING UI-KIT FROM SHADCN
+import { Button } from "@/components/ui/button";
+// GLOBAL CSS
+import '@/styles/globals.css'
+---
+
+<Base title="OPPA - Login">
+  <Main>
+    <div class="flex-row">
+      
+      <div class="grid grid-cols-2 w-60 max-md:w-50 p-1 rounded-lg mb-16 m-auto gap-x-2 bg-slate-50">
+        <Button className="flex w-full">Login</Button>
+        <a href="/signup"><Button className="flex w-full text-gray-800 bg-slate-50 hover:bg-slate-200" ref="/login" >Register</Button></a>
+      </div>
+
+      <ForgotComponent client:only/>
+   
+    </div>
+  </Main>
+</Base>
